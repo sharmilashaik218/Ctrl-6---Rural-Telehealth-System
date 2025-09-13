@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural Telehealth System Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .architecture-diagram {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+            min-height: 600px;
+        }
+
+        .user-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .backend-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .doctor-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .component {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+
+        .component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .patient {
+            border-color: #3498db;
+        }
+
+        .patient::before {
+            background: linear-gradient(90deg, #3498db, #5dade2);
+        }
+
+        .health-worker {
+            border-color: #2ecc71;
+        }
+
+        .health-worker::before {
+            background: linear-gradient(90deg, #2ecc71, #58d68d);
+        }
+
+        .doctor {
+            border-color: #e74c3c;
+        }
+
+        .doctor::before {
+            background: linear-gradient(90deg, #e74c3c, #ec7063);
+        }
+
+        .component-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .component-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .component-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .component-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .component-features li:last-child {
+            border-bottom: none;
+        }
+
+        .backend-title {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .backend-components {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .backend-item {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .backend-item h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .backend-item p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .flow-arrows {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2em;
+            color: #3498db;
+            animation: pulse 2s infinite;
+        }
+
+        .arrow-right {
+            right: -45px;
+        }
+
+        .arrow-left {
+            left: -45px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: translateY(-50%) scale(1); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.1); }
+        }
+
+        .tech-stack {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .tech-stack h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .tech-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transform: perspective(1000px) rotateX(0deg);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: perspective(1000px) rotateX(10deg);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            margin: 0;
+            font-size: 0.95em;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .architecture-diagram {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .backend-components {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-arrows {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Ctrl 6 - Rural Telehealth System</h1>
+        
+        <div class="architecture-diagram">
+            <!-- User Side -->
+            <div class="user-section">
+                <div class="component patient">
+                    <div class="component-title">📱 Patient/User App</div>
+                    <ul class="component-features">
+                        <li>Mobile OTP Login</li>
+                        <li>Voice + Local Language AI</li>
+                        <li>Symptom Input</li>
+                        <li>Chatbot Assistance</li>
+                        <li>Doctor Consultation</li>
+                        <li>Prescription History</li>
+                        <li>Offline Support</li>
+                    </ul>
+                </div>
+                
+                <div class="component health-worker">
+                    <div class="component-title">💼 Health Worker Dashboard</div>
+                    <ul class="component-features">
+                        <li>Villager Enrollment</li>
+                        <li>Vitals Recording (BP, Sugar)</li>
+                        <li>Group Consultations</li>
+                        <li>Prescription Management</li>
+                        <li>Offline-First Design</li>
+                        <li>SMS Fallback</li>
+                        <li>Health Camps</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Backend Section -->
+            <div class="backend-section">
+                <div class="flow-arrows arrow-right">→</div>
+                <div class="flow-arrows arrow-left">←</div>
+                
+                <div class="backend-title">🚀 Django Backend</div>
+                
+                <div class="backend-components">
+                    <div class="backend-item">
+                        <h4>🤖 AI Engine</h4>
+                        <p>ML Disease Prediction<br>Voice Processing<br>Local Language NLP</p>
+                    </div>
+                    
+                    <div class="backend-item">
+                        <h4>🗄️ Database</h4>
+                        <p>Patient Records<br>Consultation History<br>Vitals Data</p>
+                    </div>
+                    
+                    <div class="backend-item">
+                        <h4>📨 SMS Gateway</h4>
+                        <p>OTP Authentication<br>Prescription Delivery<br>Emergency Alerts</p>
+                    </div>
+                    
+                    <div class="backend-item">
+                        <h4>🔄 Sync Service</h4>
+                        <p>Offline Data Sync<br>Background Processing<br>Conflict Resolution</p>
+                    </div>
+                </div>
+                
+                <div class="backend-item">
+                    <h4>📊 Analytics Engine</h4>
+                    <p>Disease Trend Analysis • Community Health Reports • Government Dashboard</p>
+                </div>
+            </div>
+            
+            <!-- Doctor Side -->
+            <div class="doctor-section">
+                <div class="component doctor">
+                    <div class="component-title">👨‍⚕️ Doctor Portal</div>
+                    <ul class="component-features">
+                        <li>Patient Data Review</li>
+                        <li>ML Prediction Insights</li>
+                        <li>Video/Chat Consultations</li>
+                        <li>Digital Prescriptions</li>
+                        <li>Vitals Analysis</li>
+                        <li>Patient History</li>
+                        <li>Analytics Dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-items">
+                <div class="tech-item">
+                    <h4>Backend</h4>
+                    <p>Django + Python<br>REST APIs<br>SQLite/PostgreSQL</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Frontend</h4>
+                    <p>HTML5, CSS3, JavaScript<br>Responsive Design<br>PWA Support</p>
+                </div>
+                <div class="tech-item">
+                    <h4>AI/ML</h4>
+                    <p>TensorFlow/scikit-learn<br>NLP Models<br>Voice Processing</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Mobile</h4>
+                    <p>Future: React Native<br>Offline-First<br>Local Storage</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-features">
+            <div class="feature-card">
+                <span class="feature-icon">📶</span>
+                <h3>Offline-First Design</h3>
+                <p>Works seamlessly even with poor internet connectivity, essential for rural areas</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🗣️</span>
+                <h3>Voice + Local Language</h3>
+                <p>Telugu, Hindi support with voice interaction for elderly and illiterate users</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3>AI-Assisted Diagnosis</h3>
+                <p>Machine learning models help doctors with disease predictions and insights</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🌉</span>
+                <h3>Digital Bridge</h3>
+                <p>Health workers connect non-digital villagers with modern healthcare</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>Community Analytics</h3>
+                <p>Disease trend tracking and public health insights for government planning</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">💊</span>
+                <h3>SMS Prescription</h3>
+                <p>No internet required for receiving prescriptions and medical advice</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
